@@ -14,6 +14,9 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateSentPost{}, "blog/CreateSentPost", nil)
 	cdc.RegisterConcrete(&MsgUpdateSentPost{}, "blog/UpdateSentPost", nil)
 	cdc.RegisterConcrete(&MsgDeleteSentPost{}, "blog/DeleteSentPost", nil)
+	cdc.RegisterConcrete(&MsgCreateTimedoutPost{}, "blog/CreateTimedoutPost", nil)
+	cdc.RegisterConcrete(&MsgUpdateTimedoutPost{}, "blog/UpdateTimedoutPost", nil)
+	cdc.RegisterConcrete(&MsgDeleteTimedoutPost{}, "blog/DeleteTimedoutPost", nil)
 	// this line is used by starport scaffolding # 2
 }
 
@@ -27,6 +30,11 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgCreateSentPost{},
 		&MsgUpdateSentPost{},
 		&MsgDeleteSentPost{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreateTimedoutPost{},
+		&MsgUpdateTimedoutPost{},
+		&MsgDeleteTimedoutPost{},
 	)
 	// this line is used by starport scaffolding # 3
 

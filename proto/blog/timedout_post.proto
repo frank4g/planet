@@ -1,0 +1,11 @@
+syntax = "proto3";
+package deep2essence.planet.blog;
+
+option go_package = "github.com/deep2essence/planet/x/blog/types";
+
+message TimedoutPost {
+  uint64 id = 1;
+  string title = 2; 
+  string chain = 3; 
+  string creator = 4;
+}

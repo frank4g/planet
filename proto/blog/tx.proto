@@ -3,6 +3,7 @@ package deep2essence.planet.blog;
 
 import "blog/post.proto";
 import "blog/sent_post.proto";
+import "blog/timedout_post.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/deep2essence/planet/x/blog/types";
@@ -15,6 +16,9 @@ service Msg {
 rpc CreateSentPost(MsgCreateSentPost) returns (MsgCreateSentPostResponse);
   rpc UpdateSentPost(MsgUpdateSentPost) returns (MsgUpdateSentPostResponse);
   rpc DeleteSentPost(MsgDeleteSentPost) returns (MsgDeleteSentPostResponse);
+rpc CreateTimedoutPost(MsgCreateTimedoutPost) returns (MsgCreateTimedoutPostResponse);
+  rpc UpdateTimedoutPost(MsgUpdateTimedoutPost) returns (MsgUpdateTimedoutPostResponse);
+  rpc DeleteTimedoutPost(MsgDeleteTimedoutPost) returns (MsgDeleteTimedoutPostResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -71,5 +75,31 @@ message MsgDeleteSentPost {
 }
 
 message MsgDeleteSentPostResponse {}
+
+message MsgCreateTimedoutPost {
+  string creator = 1;
+  string title = 2;
+  string chain = 3;
+}
+
+message MsgCreateTimedoutPostResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateTimedoutPost {
+  string creator = 1;
+  uint64 id = 2;
+  string title = 3;
+  string chain = 4;
+}
+
+message MsgUpdateTimedoutPostResponse {}
+
+message MsgDeleteTimedoutPost {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgDeleteTimedoutPostResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

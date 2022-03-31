@@ -5,9 +5,10 @@ import { NoData } from "./module/types/blog/packet"
 import { Params } from "./module/types/blog/params"
 import { Post } from "./module/types/blog/post"
 import { SentPost } from "./module/types/blog/sent_post"
+import { TimedoutPost } from "./module/types/blog/timedout_post"
 
 
-export { BlogPacketData, NoData, Params, Post, SentPost };
+export { BlogPacketData, NoData, Params, Post, SentPost, TimedoutPost };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -50,6 +51,8 @@ const getDefaultState = () => {
 				PostAll: {},
 				SentPost: {},
 				SentPostAll: {},
+				TimedoutPost: {},
+				TimedoutPostAll: {},
 				
 				_Structure: {
 						BlogPacketData: getStructure(BlogPacketData.fromPartial({})),
@@ -57,6 +60,7 @@ const getDefaultState = () => {
 						Params: getStructure(Params.fromPartial({})),
 						Post: getStructure(Post.fromPartial({})),
 						SentPost: getStructure(SentPost.fromPartial({})),
+						TimedoutPost: getStructure(TimedoutPost.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -114,6 +118,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.SentPostAll[JSON.stringify(params)] ?? {}
+		},
+				getTimedoutPost: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.TimedoutPost[JSON.stringify(params)] ?? {}
+		},
+				getTimedoutPostAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.TimedoutPostAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -267,36 +283,54 @@ export default {
 		},
 		
 		
-		async sendMsgUpdatePost({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		
+		 		
+		
+		
+		async QueryTimedoutPost({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgUpdatePost(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryTimedoutPost( key.id)).data
+				
+					
+				commit('QUERY', { query: 'TimedoutPost', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryTimedoutPost', payload: { options: { all }, params: {...key},query }})
+				return getters['getTimedoutPost']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdatePost:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgUpdatePost:Send Could not broadcast Tx: '+ e.message)
-				}
+				throw new Error('QueryClient:QueryTimedoutPost API Node Unavailable. Could not perform query: ' + e.message)
+				
 			}
 		},
-		async sendMsgDeletePost({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryTimedoutPostAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeletePost(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeletePost:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgDeletePost:Send Could not broadcast Tx: '+ e.message)
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryTimedoutPostAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryTimedoutPostAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
 				}
+				commit('QUERY', { query: 'TimedoutPostAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryTimedoutPostAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getTimedoutPostAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryTimedoutPostAll API Node Unavailable. Could not perform query: ' + e.message)
+				
 			}
 		},
+		
+		
 		async sendMsgUpdateSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -312,18 +346,18 @@ export default {
 				}
 			}
 		},
-		async sendMsgDeleteSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdatePost({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeleteSentPost(value)
+				const msg = await txClient.msgUpdatePost(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteSentPost:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdatePost:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgDeleteSentPost:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgUpdatePost:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -357,33 +391,82 @@ export default {
 				}
 			}
 		},
-		
-		async MsgUpdatePost({ rootGetters }, { value }) {
+		async sendMsgDeleteSentPost({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgUpdatePost(value)
-				return msg
+				const msg = await txClient.msgDeleteSentPost(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgUpdatePost:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgDeleteSentPost:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgUpdatePost:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgDeleteSentPost:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
-		async MsgDeletePost({ rootGetters }, { value }) {
+		async sendMsgUpdateTimedoutPost({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgUpdateTimedoutPost(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateTimedoutPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateTimedoutPost:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgDeletePost({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgDeletePost(value)
-				return msg
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgDeletePost:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgDeletePost:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgDeletePost:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		async sendMsgDeleteTimedoutPost({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDeleteTimedoutPost(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteTimedoutPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteTimedoutPost:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgCreateTimedoutPost({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateTimedoutPost(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateTimedoutPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateTimedoutPost:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		
 		async MsgUpdateSentPost({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -397,16 +480,16 @@ export default {
 				}
 			}
 		},
-		async MsgDeleteSentPost({ rootGetters }, { value }) {
+		async MsgUpdatePost({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeleteSentPost(value)
+				const msg = await txClient.msgUpdatePost(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgDeleteSentPost:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgUpdatePost:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgDeleteSentPost:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgUpdatePost:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -433,6 +516,71 @@ export default {
 					throw new Error('TxClient:MsgCreateSentPost:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgCreateSentPost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteSentPost({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDeleteSentPost(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteSentPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteSentPost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgUpdateTimedoutPost({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgUpdateTimedoutPost(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgUpdateTimedoutPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgUpdateTimedoutPost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeletePost({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDeletePost(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeletePost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeletePost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgDeleteTimedoutPost({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgDeleteTimedoutPost(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgDeleteTimedoutPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgDeleteTimedoutPost:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgCreateTimedoutPost({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgCreateTimedoutPost(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgCreateTimedoutPost:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgCreateTimedoutPost:Create Could not create message: ' + e.message)
 				}
 			}
 		},

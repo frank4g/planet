@@ -48,6 +48,18 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgDeleteSentPost int = 100
 
+	opWeightMsgCreateTimedoutPost = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateTimedoutPost int = 100
+
+	opWeightMsgUpdateTimedoutPost = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgUpdateTimedoutPost int = 100
+
+	opWeightMsgDeleteTimedoutPost = "op_weight_msg_create_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeleteTimedoutPost int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -80,6 +92,17 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 			},
 		},
 		SentPostCount: 2,
+		TimedoutPostList: []types.TimedoutPost{
+			{
+				Id:      0,
+				Creator: sample.AccAddress(),
+			},
+			{
+				Id:      1,
+				Creator: sample.AccAddress(),
+			},
+		},
+		TimedoutPostCount: 2,
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&blogGenesis)
@@ -167,6 +190,39 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgDeleteSentPost,
 		blogsimulation.SimulateMsgDeleteSentPost(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgCreateTimedoutPost int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateTimedoutPost, &weightMsgCreateTimedoutPost, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateTimedoutPost = defaultWeightMsgCreateTimedoutPost
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateTimedoutPost,
+		blogsimulation.SimulateMsgCreateTimedoutPost(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgUpdateTimedoutPost int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateTimedoutPost, &weightMsgUpdateTimedoutPost, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdateTimedoutPost = defaultWeightMsgUpdateTimedoutPost
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdateTimedoutPost,
+		blogsimulation.SimulateMsgUpdateTimedoutPost(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgDeleteTimedoutPost int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteTimedoutPost, &weightMsgDeleteTimedoutPost, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteTimedoutPost = defaultWeightMsgDeleteTimedoutPost
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDeleteTimedoutPost,
+		blogsimulation.SimulateMsgDeleteTimedoutPost(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
