@@ -3,6 +3,7 @@ package deep2essence.planet.blog;
 
 import "gogoproto/gogo.proto";
 import "blog/params.proto";
+import "blog/post.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/deep2essence/planet/x/blog/types";
@@ -11,5 +12,7 @@ option go_package = "github.com/deep2essence/planet/x/blog/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   string port_id = 2;
+  repeated Post postList = 3 [(gogoproto.nullable) = false];
+  uint64 postCount = 4;
   // this line is used by starport scaffolding # genesis/proto/state
 }
