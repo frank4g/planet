@@ -30,6 +30,34 @@ export interface MsgDeletePost {
 
 export interface MsgDeletePostResponse {}
 
+export interface MsgCreateSentPost {
+  creator: string;
+  postID: string;
+  title: string;
+  chain: string;
+}
+
+export interface MsgCreateSentPostResponse {
+  id: number;
+}
+
+export interface MsgUpdateSentPost {
+  creator: string;
+  id: number;
+  postID: string;
+  title: string;
+  chain: string;
+}
+
+export interface MsgUpdateSentPostResponse {}
+
+export interface MsgDeleteSentPost {
+  creator: string;
+  id: number;
+}
+
+export interface MsgDeleteSentPostResponse {}
+
 const baseMsgCreatePost: object = { creator: "", title: "", content: "" };
 
 export const MsgCreatePost = {
@@ -438,12 +466,506 @@ export const MsgDeletePostResponse = {
   },
 };
 
+const baseMsgCreateSentPost: object = {
+  creator: "",
+  postID: "",
+  title: "",
+  chain: "",
+};
+
+export const MsgCreateSentPost = {
+  encode(message: MsgCreateSentPost, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.postID !== "") {
+      writer.uint32(18).string(message.postID);
+    }
+    if (message.title !== "") {
+      writer.uint32(26).string(message.title);
+    }
+    if (message.chain !== "") {
+      writer.uint32(34).string(message.chain);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateSentPost {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateSentPost } as MsgCreateSentPost;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.postID = reader.string();
+          break;
+        case 3:
+          message.title = reader.string();
+          break;
+        case 4:
+          message.chain = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateSentPost {
+    const message = { ...baseMsgCreateSentPost } as MsgCreateSentPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.postID !== undefined && object.postID !== null) {
+      message.postID = String(object.postID);
+    } else {
+      message.postID = "";
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = String(object.title);
+    } else {
+      message.title = "";
+    }
+    if (object.chain !== undefined && object.chain !== null) {
+      message.chain = String(object.chain);
+    } else {
+      message.chain = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateSentPost): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.postID !== undefined && (obj.postID = message.postID);
+    message.title !== undefined && (obj.title = message.title);
+    message.chain !== undefined && (obj.chain = message.chain);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateSentPost>): MsgCreateSentPost {
+    const message = { ...baseMsgCreateSentPost } as MsgCreateSentPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.postID !== undefined && object.postID !== null) {
+      message.postID = object.postID;
+    } else {
+      message.postID = "";
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = object.title;
+    } else {
+      message.title = "";
+    }
+    if (object.chain !== undefined && object.chain !== null) {
+      message.chain = object.chain;
+    } else {
+      message.chain = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateSentPostResponse: object = { id: 0 };
+
+export const MsgCreateSentPostResponse = {
+  encode(
+    message: MsgCreateSentPostResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgCreateSentPostResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgCreateSentPostResponse,
+    } as MsgCreateSentPostResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateSentPostResponse {
+    const message = {
+      ...baseMsgCreateSentPostResponse,
+    } as MsgCreateSentPostResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateSentPostResponse): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgCreateSentPostResponse>
+  ): MsgCreateSentPostResponse {
+    const message = {
+      ...baseMsgCreateSentPostResponse,
+    } as MsgCreateSentPostResponse;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateSentPost: object = {
+  creator: "",
+  id: 0,
+  postID: "",
+  title: "",
+  chain: "",
+};
+
+export const MsgUpdateSentPost = {
+  encode(message: MsgUpdateSentPost, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.postID !== "") {
+      writer.uint32(26).string(message.postID);
+    }
+    if (message.title !== "") {
+      writer.uint32(34).string(message.title);
+    }
+    if (message.chain !== "") {
+      writer.uint32(42).string(message.chain);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgUpdateSentPost {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgUpdateSentPost } as MsgUpdateSentPost;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.postID = reader.string();
+          break;
+        case 4:
+          message.title = reader.string();
+          break;
+        case 5:
+          message.chain = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateSentPost {
+    const message = { ...baseMsgUpdateSentPost } as MsgUpdateSentPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.postID !== undefined && object.postID !== null) {
+      message.postID = String(object.postID);
+    } else {
+      message.postID = "";
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = String(object.title);
+    } else {
+      message.title = "";
+    }
+    if (object.chain !== undefined && object.chain !== null) {
+      message.chain = String(object.chain);
+    } else {
+      message.chain = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgUpdateSentPost): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    message.postID !== undefined && (obj.postID = message.postID);
+    message.title !== undefined && (obj.title = message.title);
+    message.chain !== undefined && (obj.chain = message.chain);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgUpdateSentPost>): MsgUpdateSentPost {
+    const message = { ...baseMsgUpdateSentPost } as MsgUpdateSentPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.postID !== undefined && object.postID !== null) {
+      message.postID = object.postID;
+    } else {
+      message.postID = "";
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = object.title;
+    } else {
+      message.title = "";
+    }
+    if (object.chain !== undefined && object.chain !== null) {
+      message.chain = object.chain;
+    } else {
+      message.chain = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgUpdateSentPostResponse: object = {};
+
+export const MsgUpdateSentPostResponse = {
+  encode(
+    _: MsgUpdateSentPostResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgUpdateSentPostResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgUpdateSentPostResponse,
+    } as MsgUpdateSentPostResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateSentPostResponse {
+    const message = {
+      ...baseMsgUpdateSentPostResponse,
+    } as MsgUpdateSentPostResponse;
+    return message;
+  },
+
+  toJSON(_: MsgUpdateSentPostResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgUpdateSentPostResponse>
+  ): MsgUpdateSentPostResponse {
+    const message = {
+      ...baseMsgUpdateSentPostResponse,
+    } as MsgUpdateSentPostResponse;
+    return message;
+  },
+};
+
+const baseMsgDeleteSentPost: object = { creator: "", id: 0 };
+
+export const MsgDeleteSentPost = {
+  encode(message: MsgDeleteSentPost, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteSentPost {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteSentPost } as MsgDeleteSentPost;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDeleteSentPost {
+    const message = { ...baseMsgDeleteSentPost } as MsgDeleteSentPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDeleteSentPost): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteSentPost>): MsgDeleteSentPost {
+    const message = { ...baseMsgDeleteSentPost } as MsgDeleteSentPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgDeleteSentPostResponse: object = {};
+
+export const MsgDeleteSentPostResponse = {
+  encode(
+    _: MsgDeleteSentPostResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgDeleteSentPostResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgDeleteSentPostResponse,
+    } as MsgDeleteSentPostResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgDeleteSentPostResponse {
+    const message = {
+      ...baseMsgDeleteSentPostResponse,
+    } as MsgDeleteSentPostResponse;
+    return message;
+  },
+
+  toJSON(_: MsgDeleteSentPostResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgDeleteSentPostResponse>
+  ): MsgDeleteSentPostResponse {
+    const message = {
+      ...baseMsgDeleteSentPostResponse,
+    } as MsgDeleteSentPostResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePost(request: MsgCreatePost): Promise<MsgCreatePostResponse>;
   UpdatePost(request: MsgUpdatePost): Promise<MsgUpdatePostResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   DeletePost(request: MsgDeletePost): Promise<MsgDeletePostResponse>;
+  CreateSentPost(
+    request: MsgCreateSentPost
+  ): Promise<MsgCreateSentPostResponse>;
+  UpdateSentPost(
+    request: MsgUpdateSentPost
+  ): Promise<MsgUpdateSentPostResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  DeleteSentPost(
+    request: MsgDeleteSentPost
+  ): Promise<MsgDeleteSentPostResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -484,6 +1006,48 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgDeletePostResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateSentPost(
+    request: MsgCreateSentPost
+  ): Promise<MsgCreateSentPostResponse> {
+    const data = MsgCreateSentPost.encode(request).finish();
+    const promise = this.rpc.request(
+      "deep2essence.planet.blog.Msg",
+      "CreateSentPost",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateSentPostResponse.decode(new Reader(data))
+    );
+  }
+
+  UpdateSentPost(
+    request: MsgUpdateSentPost
+  ): Promise<MsgUpdateSentPostResponse> {
+    const data = MsgUpdateSentPost.encode(request).finish();
+    const promise = this.rpc.request(
+      "deep2essence.planet.blog.Msg",
+      "UpdateSentPost",
+      data
+    );
+    return promise.then((data) =>
+      MsgUpdateSentPostResponse.decode(new Reader(data))
+    );
+  }
+
+  DeleteSentPost(
+    request: MsgDeleteSentPost
+  ): Promise<MsgDeleteSentPostResponse> {
+    const data = MsgDeleteSentPost.encode(request).finish();
+    const promise = this.rpc.request(
+      "deep2essence.planet.blog.Msg",
+      "DeleteSentPost",
+      data
+    );
+    return promise.then((data) =>
+      MsgDeleteSentPostResponse.decode(new Reader(data))
     );
   }
 }
