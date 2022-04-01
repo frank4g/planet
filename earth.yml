@@ -1,0 +1,22 @@
+accounts:
+  - name: alice
+    coins: ["1000token", "100000000stake"]
+  - name: bob
+    coins: ["500token", "100000000stake"]
+validator:
+  name: alice
+  staked: "100000000stake"
+faucet:
+  name: bob
+  coins: ["5token", "100000stake"]
+host:
+  rpc: ":26657"
+  p2p: ":26656"
+  prof: ":6062"
+  grpc: ":9094"
+  grpc-web: ":9095"
+  api: ":1317"
+genesis:
+  chain_id: "earth"
+init:
+  home: "$HOME/.earth"

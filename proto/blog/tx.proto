@@ -19,6 +19,7 @@ rpc CreateSentPost(MsgCreateSentPost) returns (MsgCreateSentPostResponse);
 rpc CreateTimedoutPost(MsgCreateTimedoutPost) returns (MsgCreateTimedoutPostResponse);
   rpc UpdateTimedoutPost(MsgUpdateTimedoutPost) returns (MsgUpdateTimedoutPostResponse);
   rpc DeleteTimedoutPost(MsgDeleteTimedoutPost) returns (MsgDeleteTimedoutPostResponse);
+  rpc SendIbcPost(MsgSendIbcPost) returns (MsgSendIbcPostResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -102,4 +103,15 @@ message MsgDeleteTimedoutPost {
 
 message MsgDeleteTimedoutPostResponse {}
 
+message MsgSendIbcPost {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string title = 5;
+  string content = 6;
+}
+
+message MsgSendIbcPostResponse {
+}
 // this line is used by starport scaffolding # proto/tx/message

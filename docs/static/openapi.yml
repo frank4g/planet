@@ -43295,6 +43295,8 @@ definitions:
     type: object
   deep2essence.planet.blog.MsgDeleteTimedoutPostResponse:
     type: object
+  deep2essence.planet.blog.MsgSendIbcPostResponse:
+    type: object
   deep2essence.planet.blog.MsgUpdatePostResponse:
     type: object
   deep2essence.planet.blog.MsgUpdateSentPostResponse:
