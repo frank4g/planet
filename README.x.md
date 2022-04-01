@@ -20,3 +20,9 @@ Q|A
 ```starport scaffold list --no-message```|*When a new type is scaffolded, the default behavior is to scaffold messages that can be sent by users for **CRUD operations**. The --no-message flag disables this feature. Disable the messages option for the app since you want the posts to be created upon reception of IBC packets and not directly created from a user's messages.*
 ```starport scaffold packet ```
 ```starport scaffold packet --ack```|*The ```--ack``` flag defines which identifier is returned to the sending blockchain*
+
+## scripts, third_party, Makefile borrowed from sifchain
+```
+cp -rf /media/gustav/Investigation/github.com/deep2essence/sifnode/third_party/ .
+cp -rf /media/gustav/Investigation/github.com/deep2essence/sifnode/scripts/ .
+```
