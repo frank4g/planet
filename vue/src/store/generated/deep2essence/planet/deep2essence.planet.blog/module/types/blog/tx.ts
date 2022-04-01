@@ -84,6 +84,17 @@ export interface MsgDeleteTimedoutPost {
 
 export interface MsgDeleteTimedoutPostResponse {}
 
+export interface MsgSendIbcPost {
+  creator: string;
+  port: string;
+  channelID: string;
+  timeoutTimestamp: number;
+  title: string;
+  content: string;
+}
+
+export interface MsgSendIbcPostResponse {}
+
 const baseMsgCreatePost: object = { creator: "", title: "", content: "" };
 
 export const MsgCreatePost = {
@@ -1437,6 +1448,198 @@ export const MsgDeleteTimedoutPostResponse = {
   },
 };
 
+const baseMsgSendIbcPost: object = {
+  creator: "",
+  port: "",
+  channelID: "",
+  timeoutTimestamp: 0,
+  title: "",
+  content: "",
+};
+
+export const MsgSendIbcPost = {
+  encode(message: MsgSendIbcPost, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.port !== "") {
+      writer.uint32(18).string(message.port);
+    }
+    if (message.channelID !== "") {
+      writer.uint32(26).string(message.channelID);
+    }
+    if (message.timeoutTimestamp !== 0) {
+      writer.uint32(32).uint64(message.timeoutTimestamp);
+    }
+    if (message.title !== "") {
+      writer.uint32(42).string(message.title);
+    }
+    if (message.content !== "") {
+      writer.uint32(50).string(message.content);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgSendIbcPost {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgSendIbcPost } as MsgSendIbcPost;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.port = reader.string();
+          break;
+        case 3:
+          message.channelID = reader.string();
+          break;
+        case 4:
+          message.timeoutTimestamp = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.title = reader.string();
+          break;
+        case 6:
+          message.content = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgSendIbcPost {
+    const message = { ...baseMsgSendIbcPost } as MsgSendIbcPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.port !== undefined && object.port !== null) {
+      message.port = String(object.port);
+    } else {
+      message.port = "";
+    }
+    if (object.channelID !== undefined && object.channelID !== null) {
+      message.channelID = String(object.channelID);
+    } else {
+      message.channelID = "";
+    }
+    if (
+      object.timeoutTimestamp !== undefined &&
+      object.timeoutTimestamp !== null
+    ) {
+      message.timeoutTimestamp = Number(object.timeoutTimestamp);
+    } else {
+      message.timeoutTimestamp = 0;
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = String(object.title);
+    } else {
+      message.title = "";
+    }
+    if (object.content !== undefined && object.content !== null) {
+      message.content = String(object.content);
+    } else {
+      message.content = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgSendIbcPost): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.port !== undefined && (obj.port = message.port);
+    message.channelID !== undefined && (obj.channelID = message.channelID);
+    message.timeoutTimestamp !== undefined &&
+      (obj.timeoutTimestamp = message.timeoutTimestamp);
+    message.title !== undefined && (obj.title = message.title);
+    message.content !== undefined && (obj.content = message.content);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgSendIbcPost>): MsgSendIbcPost {
+    const message = { ...baseMsgSendIbcPost } as MsgSendIbcPost;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.port !== undefined && object.port !== null) {
+      message.port = object.port;
+    } else {
+      message.port = "";
+    }
+    if (object.channelID !== undefined && object.channelID !== null) {
+      message.channelID = object.channelID;
+    } else {
+      message.channelID = "";
+    }
+    if (
+      object.timeoutTimestamp !== undefined &&
+      object.timeoutTimestamp !== null
+    ) {
+      message.timeoutTimestamp = object.timeoutTimestamp;
+    } else {
+      message.timeoutTimestamp = 0;
+    }
+    if (object.title !== undefined && object.title !== null) {
+      message.title = object.title;
+    } else {
+      message.title = "";
+    }
+    if (object.content !== undefined && object.content !== null) {
+      message.content = object.content;
+    } else {
+      message.content = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgSendIbcPostResponse: object = {};
+
+export const MsgSendIbcPostResponse = {
+  encode(_: MsgSendIbcPostResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgSendIbcPostResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgSendIbcPostResponse } as MsgSendIbcPostResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgSendIbcPostResponse {
+    const message = { ...baseMsgSendIbcPostResponse } as MsgSendIbcPostResponse;
+    return message;
+  },
+
+  toJSON(_: MsgSendIbcPostResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgSendIbcPostResponse>): MsgSendIbcPostResponse {
+    const message = { ...baseMsgSendIbcPostResponse } as MsgSendIbcPostResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreatePost(request: MsgCreatePost): Promise<MsgCreatePostResponse>;
@@ -1457,10 +1660,11 @@ export interface Msg {
   UpdateTimedoutPost(
     request: MsgUpdateTimedoutPost
   ): Promise<MsgUpdateTimedoutPostResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   DeleteTimedoutPost(
     request: MsgDeleteTimedoutPost
   ): Promise<MsgDeleteTimedoutPostResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  SendIbcPost(request: MsgSendIbcPost): Promise<MsgSendIbcPostResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -1585,6 +1789,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgDeleteTimedoutPostResponse.decode(new Reader(data))
+    );
+  }
+
+  SendIbcPost(request: MsgSendIbcPost): Promise<MsgSendIbcPostResponse> {
+    const data = MsgSendIbcPost.encode(request).finish();
+    const promise = this.rpc.request(
+      "deep2essence.planet.blog.Msg",
+      "SendIbcPost",
+      data
+    );
+    return promise.then((data) =>
+      MsgSendIbcPostResponse.decode(new Reader(data))
     );
   }
 }
